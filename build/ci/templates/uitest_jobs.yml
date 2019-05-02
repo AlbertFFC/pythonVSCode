@@ -1,14 +1,17 @@
 parameters:
-  jobs: []
+  tests: []
 
 jobs:
-- job: Smoke2
+- job: UITest
+  dependsOn:
+    - Compile
+    - Build
   timeoutInMinutes: 90
   strategy:
     matrix:
-      ${{ each item in parameters.jobs }}:
+      ${{ each item in parameters.tests }}:
         # 3.7
-        ${{ if not(contains(item.value.NotPythonVersions, "3.7")) }}:
+        ${{ if or(not(item.value.NotPythonVersion), not(contains(item.value.NotPythonVersion, '3.7'))) }}:
           ${{ format('Mac_Py37_{0}', item.key) }}:
             PythonVersion: "3.7"
             VMImageName: "macos-10.13"
@@ -25,7 +28,7 @@ jobs:
             Tags: ${{ item.value.Tags }}
 
         # 3.6
-        ${{ if not(contains(item.value.NotPythonVersions, "3.6")) }}:
+        ${{ if or(not(item.value.NotPythonVersion), not(contains(item.value.NotPythonVersion, '3.6'))) }}:
           ${{ format('Mac_Py36_{0}', item.key) }}:
             PythonVersion: "3.6"
             VMImageName: "macos-10.13"
@@ -42,7 +45,7 @@ jobs:
             Tags: ${{ item.value.Tags }}
 
         # 3.5
-        ${{ if not(contains(item.value.NotPythonVersions, "3.5")) }}:
+        ${{ if or(not(item.value.NotPythonVersion), not(contains(item.value.NotPythonVersion, '3.5'))) }}:
           ${{ format('Mac_Py35_{0}', item.key) }}:
             PythonVersion: "3.5"
             VMImageName: "macos-10.13"
@@ -59,7 +62,7 @@ jobs:
             Tags: ${{ item.value.Tags }}
 
         # 2.7
-        ${{ if not(contains(item.value.NotPythonVersions, "2.7")) }}:
+        ${{ if or(not(item.value.NotPythonVersion), not(contains(item.value.NotPythonVersion, '2.7'))) }}:
           ${{ format('Mac_Py27_{0}', item.key) }}:
             PythonVersion: "2.7"
             VMImageName: "macos-10.13"

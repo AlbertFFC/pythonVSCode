@@ -21,7 +21,7 @@ def then_stops(context):
 
 
 @behave.then("the debugger pauses")
-def then_stops(context):
+def then_pauses2(context):
     uitests.vscode.debugger.wait_for_debugger_to_pause(context)
 
 

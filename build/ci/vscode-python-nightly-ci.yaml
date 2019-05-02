@@ -40,13 +40,19 @@ jobs:
 
 - template: templates/uitest_jobs.yml
   parameters:
-    jobs:
+    tests:
       Smoke:
         Tags: "--tags=smoke"
-        NotPythonVersions: "3.5"
+        # Include if you don't want to run tests on Python 3.6,3.5
+        # NotPythonVersion: "3.6,3.5"
+        # Include if you don't want to run tests on a specidfic OS Windows,Mac,Linux
+        # NotOperatingSystem: "Windows,Linux"
       Test:
         Tags: "--tags=test"
-        NotPythonVersions: "3.7"
+      Terminal:
+        Tags: "--tags=terminal"
+      TestBlah:
+        Tags: "--tags=blah"
 
 - job: Smoke
 #   dependsOn:
