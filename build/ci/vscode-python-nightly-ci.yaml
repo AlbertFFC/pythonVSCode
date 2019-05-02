@@ -38,6 +38,14 @@ jobs:
   steps:
     - template: templates/build.yml
 
+- template: templates/uitest_jobs.yml
+  parameters:
+    jobs:
+      Smoke:
+        Tags: "--tags=smoke"
+      Test:
+        Tags: "--tags=test"
+
 - job: Smoke
 #   dependsOn:
 #     - Compile
