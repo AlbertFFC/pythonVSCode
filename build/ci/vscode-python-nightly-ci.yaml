@@ -43,8 +43,10 @@ jobs:
     jobs:
       Smoke:
         Tags: "--tags=smoke"
+        NotPythonVersions: "3.5"
       Test:
         Tags: "--tags=test"
+        NotPythonVersions: "3.7"
 
 - job: Smoke
 #   dependsOn:

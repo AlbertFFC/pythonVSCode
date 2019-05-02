@@ -7,20 +7,73 @@ jobs:
   strategy:
     matrix:
       ${{ each item in parameters.jobs }}:
-        ${{ format('Mac_Py{0}', item.key) }}:
-          PythonVersion: "3.7"
-          VMImageName: "macos-10.13"
-          Tags: ${{ item.value.Tags }}
+        # 3.7
+        ${{ if not(contains(item.value.NotPythonVersions, "3.7")) }}:
+          ${{ format('Mac_Py37_{0}', item.key) }}:
+            PythonVersion: "3.7"
+            VMImageName: "macos-10.13"
+            Tags: ${{ item.value.Tags }}
 
-        ${{ format('Win_Py{0}', item.key) }}:
-          PythonVersion: "3.7"
-          VMImageName: "vs2017-win2016"
-          Tags: ${{ item.value.Tags }}
+          ${{ format('Win_Py37_{0}', item.key) }}:
+            PythonVersion: "3.7"
+            VMImageName: "vs2017-win2016"
+            Tags: ${{ item.value.Tags }}
 
-        ${{ format('Linux_Py{0}', item.key) }}:
-          PythonVersion: "3.7"
-          VMImageName: "ubuntu-16.04"
-          Tags: ${{ item.value.Tags }}
+          ${{ format('Linux_Py37_{0}', item.key) }}:
+            PythonVersion: "3.7"
+            VMImageName: "ubuntu-16.04"
+            Tags: ${{ item.value.Tags }}
+
+        # 3.6
+        ${{ if not(contains(item.value.NotPythonVersions, "3.6")) }}:
+          ${{ format('Mac_Py36_{0}', item.key) }}:
+            PythonVersion: "3.6"
+            VMImageName: "macos-10.13"
+            Tags: ${{ item.value.Tags }}
+
+          ${{ format('Win_Py36_{0}', item.key) }}:
+            PythonVersion: "3.6"
+            VMImageName: "vs2017-win2016"
+            Tags: ${{ item.value.Tags }}
+
+          ${{ format('Linux_Py36_{0}', item.key) }}:
+            PythonVersion: "3.6"
+            VMImageName: "ubuntu-16.04"
+            Tags: ${{ item.value.Tags }}
+
+        # 3.5
+        ${{ if not(contains(item.value.NotPythonVersions, "3.5")) }}:
+          ${{ format('Mac_Py35_{0}', item.key) }}:
+            PythonVersion: "3.5"
+            VMImageName: "macos-10.13"
+            Tags: ${{ item.value.Tags }}
+
+          ${{ format('Win_Py35_{0}', item.key) }}:
+            PythonVersion: "3.5"
+            VMImageName: "vs2017-win2016"
+            Tags: ${{ item.value.Tags }}
+
+          ${{ format('Linux_Py35_{0}', item.key) }}:
+            PythonVersion: "3.5"
+            VMImageName: "ubuntu-16.04"
+            Tags: ${{ item.value.Tags }}
+
+        # 2.7
+        ${{ if not(contains(item.value.NotPythonVersions, "2.7")) }}:
+          ${{ format('Mac_Py27_{0}', item.key) }}:
+            PythonVersion: "2.7"
+            VMImageName: "macos-10.13"
+            Tags: ${{ item.value.Tags }}
+
+          ${{ format('Win_Py27_{0}', item.key) }}:
+            PythonVersion: "2.7"
+            VMImageName: "vs2017-win2016"
+            Tags: ${{ item.value.Tags }}
+
+          ${{ format('Linux_Py27_{0}', item.key) }}:
+            PythonVersion: "2.7"
+            VMImageName: "ubuntu-16.04"
+            Tags: ${{ item.value.Tags }}
 
   pool:
     vmImage: $(VMImageName)
