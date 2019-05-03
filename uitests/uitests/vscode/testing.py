@@ -115,7 +115,7 @@ def click_node(context, number):
 
 
 def click_node_action_item(context, number, tooltip):
-    expand_nodes(context)
+    expand_nodes(context, number)
     _select_node(context, number)
     action = _get_action_item(context, number, tooltip)
     action.click()
@@ -126,24 +126,31 @@ def _get_action_item(context, number, tooltip):
     return context.driver.find_element_by_css_selector(selector)
 
 
-def expand_nodes(context):
+def expand_nodes(context, max_nodes=None):
     time.sleep(0.1)
     start_time = time.time()
-    while time.time() - start_time < 5:
-        _expand_nodes(context)
+    counter = 0
+    # Don't spend more than 10 seconds.
+    while time.time() - start_time < 10:
+        if max_nodes is not None and counter > max_nodes:
+            return
+        _expand_nodes(context, max_nodes)
+        # Wait for ui to get updated.
+        time.sleep(0.1)
         if get_node_count(context) > 1:
             return
-        time.sleep(0.1)
+        counter += 1
     else:
         raise TimeoutError("Timeout waiting to expand all nodes")
 
 
-def _expand_nodes(context):
+def _expand_nodes(context, max_nodes=None):
     tree = uitests.vscode.core.wait_for_element(
         context.driver, ".monaco-tree.monaco-tree-instance-2"
     )
     tree.click()
-    for i in range(1, 5000):
+    # This code is wrong, it doesn't expand 5000 node items at all.
+    for i in range(1, min(5000, 5000 if max_nodes is None else max_nodes)):
         selector = (
             f"div[id='workbench.view.extension.test'] .monaco-tree-row:nth-child({i})"
         )
@@ -161,6 +168,8 @@ def _expand_nodes(context):
             uitests.vscode.core.wait_for_element(context.driver, selector, find)
 
         try:
+            tree.send_keys(Keys.DOWN)
+            time.sleep(0.1)
             selector = f"div[id='workbench.view.extension.test'] .monaco-tree-row:nth-child({i+1})"
             element = context.driver.find_element_by_css_selector(selector)
         except Exception:

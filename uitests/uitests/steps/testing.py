@@ -65,6 +65,12 @@ def explorer_node_count(context, count):
     assert total_count == count
 
 
+@behave.then("there are at least {count:Number} nodes in the tree")
+def explorer_node_count_minimum(context, count):
+    total_count = uitests.vscode.testing.get_node_count(context)
+    assert total_count >= count
+
+
 @behave.when("I expand all of the test tree nodes")
 def explorer_expand_nodes(context):
     try:
@@ -80,6 +86,23 @@ def explorer_expand_nodes(context):
         wait_for_discovery_to_complete(context)
     # try again.
     uitests.vscode.testing.expand_nodes(context)
+
+
+@behave.when("I expand the first {count:Number} of the test tree nodes")
+def explorer_expand_nodes_count(context, count):
+    try:
+        uitests.vscode.testing.expand_nodes(context, count)
+        return
+    except TimeoutError:
+        # Rediscover tests.
+        uitests.vscode.quick_open.select_command(context, "Python: Discover Tests")
+        # As this is a flaky scenario, lets wait for 5s.
+        # Enough time for tests to start & perhaps complete.
+        time.sleep(5)
+        # If tests discovery has not completed, then lets wait.
+        wait_for_discovery_to_complete(context)
+    # try again.
+    uitests.vscode.testing.expand_nodes(context, count)
 
 
 @behave.when("I click node number {number:Number}")
@@ -166,6 +189,9 @@ def wait_for_run_to_complete(context):
 @behave.when("I wait for tests discovery to complete")
 @uitests.tools.retry(AssertionError)
 def wait_for_discovery_to_complete(context):
+    # Lets wait for discovery to start and stop button to appear,
+    # before wait for it to disappear.
+    time.sleep(1)
     uitests.vscode.testing.wait_for_stop_hidden(context)
 
 

@@ -1,33 +1,42 @@
 # Copyright (c) Microsoft Corporation. All rights reserved.
 # Licensed under the MIT License.
 
-import os.path
 import time
 
 import behave
 
-import uitests.vscode.debugger
 import uitests.tools
+import uitests.vscode.debugger
+import uitests.vscode.quick_open
 
 
+@uitests.tools.retry((AssertionError, TimeoutError), tries=2)
 @behave.then("the debugger starts")
 def then_starts(context):
     uitests.vscode.debugger.wait_for_debugger_to_start(context)
 
 
+@uitests.tools.retry((AssertionError, TimeoutError), tries=2)
 @behave.then("the debugger stops")
 def then_stops(context):
     uitests.vscode.debugger.wait_for_debugger_to_stop(context)
 
 
+@uitests.tools.retry((AssertionError, TimeoutError), tries=2)
 @behave.then("the debugger pauses")
 def then_pauses2(context):
     uitests.vscode.debugger.wait_for_debugger_to_pause(context)
+    time.sleep(1)
 
 
 @behave.when('I add a breakpoint to line {line:Number} in "{file}"')
 def add_breakpoint(context, line, file):
     uitests.vscode.debugger.add_breakpoint(context, file, line)
+
+
+@behave.when("I add a breakpoint to the current line in the current editor")
+def add_breakpoint_current_file(context):
+    uitests.vscode.quick_open.select_command(context, "Debug: Toggle Breakpoint")
 
 
 @behave.then('the current stack frame is at line {line_number:Number} in "{file_name}"')
